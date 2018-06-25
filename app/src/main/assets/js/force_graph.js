@@ -1,7 +1,7 @@
 //dimensions of the svg
 var width = 600, height = 600;
 
-var radius = width / 40;
+var radius = width / 60;
 
 //test-data
 var nodes = [
@@ -85,7 +85,7 @@ function handleMouseOver(d, i){
   d3.select('svg').append('text')
   .attr('id', 't' + i)
   .attr('x', function() { return d.x + 6; })
-  .attr('y', function() { return d.y - 40; })
+  .attr('y', function() { return d.y - height/35; })
   .text(function() { return d.name;});
 }
 
