@@ -1,42 +1,29 @@
 package com.BetterTogether.app;
 
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.support.v7.widget.Toolbar;
 
-import java.util.ArrayList;
 
 public class Overview extends AppCompatActivity {
-
-    private MyAdapter myAdapter;
-    private ArrayList<Integer> clicked;
-    private String[] testData = {"1", "2", "3", "4"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
-        clicked = new ArrayList<>();
-        myAdapter = new MyAdapter(this, testData);
-        final ListView listView = findViewById(R.id.user_list);
-        listView.setAdapter(myAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (clicked.contains(i)) {
-                    listView.getChildAt(i).setBackgroundColor(Color.WHITE);
-                    clicked.remove(clicked.indexOf(i));
-                } else {
-                    if(clicked.size()<2) {
-                        clicked.add(i);
-                        listView.getChildAt(i).setBackgroundColor(Color.GREEN);
-                    }
-                }
-            }
-        });
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(), new UserListFragment(), new GraphFragment());
+        ViewPager viewPager = findViewById(R.id.pager);
+        viewPager.setAdapter(tabAdapter);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.bringToFront();
+        tabLayout.setupWithViewPager(viewPager);
     }
+
+
 }
