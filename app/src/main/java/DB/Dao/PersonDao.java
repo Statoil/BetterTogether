@@ -27,6 +27,9 @@ public interface PersonDao {
     @Insert
     void insertPerson(Person person);
 
+    @Insert
+    long[] insertAll(Person ... persons);
+
     @Delete
     //note, all usernames are lower case
     void deletePerson(Person person);
