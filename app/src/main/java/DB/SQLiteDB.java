@@ -16,7 +16,7 @@ import DB.Tables.Person;
 import DB.Tables.Reward;
 import DB.Tables.Threshold;
 
-@Database(entities = {Person.class, Pair.class, Reward.class, Threshold.class}, version = 2)
+@Database(entities = {Person.class, Pair.class, Reward.class, Threshold.class}, version = 2, exportSchema = false)
 @TypeConverters({DataConverter.class})
 public abstract class SQLiteDB extends RoomDatabase {
 
@@ -27,7 +27,6 @@ public abstract class SQLiteDB extends RoomDatabase {
     public abstract RewardDao rewardDao();
 
     public abstract PairDao pairDao();
-
 
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
