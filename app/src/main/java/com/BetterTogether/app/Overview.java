@@ -24,6 +24,4 @@ public class Overview extends AppCompatActivity {
         tabLayout.bringToFront();
         tabLayout.setupWithViewPager(viewPager);
     }
-
-
 }

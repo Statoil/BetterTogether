@@ -26,8 +26,6 @@ public class GraphFragment extends Fragment {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
-        webSettings.setAllowUniversalAccessFromFileURLs(true);
-        webSettings.setAllowFileAccess(true);
         webView.loadUrl(GRAPH_PATH);
     }
 
