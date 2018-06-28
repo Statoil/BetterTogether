@@ -73,13 +73,9 @@ public class UserListFragment extends Fragment {
     }
 
     public void resetSelectedPersons() {
-        for (Integer i : selectedItems) {
+        for (Integer i : selectedItems)
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-        }
-        selectedItems.clear();
-    }
 
-    public ArrayList<Integer> getSelectedItemPositions() {
-        return selectedItems;
+        selectedItems.clear();
     }
 }
