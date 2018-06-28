@@ -75,7 +75,7 @@ public class UserListFragment extends Fragment {
         gridView.setOnItemClickListener((adapterView, view1, position, l) -> selectItemAtPosition(position));
     }
 
-    public void createPair() {
+    private void createPair() {
         if (selectedItems.size() < 2) {
             Toast.makeText(getContext(), "You need to select two users for pair programming", Toast.LENGTH_SHORT).show();
             return;
@@ -93,7 +93,7 @@ public class UserListFragment extends Fragment {
                 error -> Toast.makeText(getContext(), "Something went wrong while inserting to database.", Toast.LENGTH_SHORT).show());
     }
 
-    public void writePairCountToScreen() {
+    private void writePairCountToScreen() {
         Disposable d = handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01, 00, 00, 00).getTimeInMillis()))
                 .subscribe(pairs -> numPairs.setText("#Pairs: " + pairs.size()));
     }
