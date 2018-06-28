@@ -32,8 +32,11 @@ public class Threshold {
         return threshold;
     }
 
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
+    public static Threshold[] initialThresholds() {
+        Threshold[] t = new Threshold[2];
+        t[0] = new Threshold(RewardType.CAKE, 50);
+        t[1] = new Threshold(RewardType.PIZZA, 100);
+        return t;
     }
 
 }

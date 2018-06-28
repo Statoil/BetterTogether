@@ -14,26 +14,25 @@ public class UserListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private String[] dataSet;
 
-    public UserListAdapter(Context context, String[] dataSet){
+    public UserListAdapter(Context context, String[] dataSet) {
         this.dataSet = dataSet;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
     @Override
     public int getCount() {
-        if(dataSet!=null) {
+        if (dataSet != null) {
             return dataSet.length;
-        }
-        else{
+        } else {
             return 0;
         }
     }
 
     @Override
     public Object getItem(int i) {
-        if(i<dataSet.length) {
+        if (i < dataSet.length) {
             return dataSet[i];
-        }
-        else return -1;
+        } else return -1;
     }
 
     @Override

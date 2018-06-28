@@ -11,7 +11,6 @@ import java.util.List;
 import DB.Tables.Pair;
 
 
-
 @Dao
 public interface PairDao {
 
@@ -26,7 +25,7 @@ public interface PairDao {
     int getPairProgrammingTotalFromDate(Date date);
 
     @Insert
-    void insertPair(Pair pair);
+    long insertPair(Pair pair);
 
     @Delete
     void deletePair(Pair pair);
