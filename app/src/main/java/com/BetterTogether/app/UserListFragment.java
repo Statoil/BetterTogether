@@ -13,17 +13,20 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import DB.DatabaseThreadHandler;
 import DB.Tables.Pair;
 import DB.Tables.Person;
+import io.reactivex.disposables.Disposable;
 
 public class UserListFragment extends Fragment {
 
     private ArrayList<Integer> selectedItems;
 
     private List<Person> users;
+
     private GridView gridView;
     private TextView numPairs;
 
@@ -46,9 +49,10 @@ public class UserListFragment extends Fragment {
         Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
         cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
         selectedItems = new ArrayList<>();
-        handler.allPersons().subscribe(
+        Disposable d = handler.allPersons().subscribe(
                 persons -> setUpGridView(persons),
                 error -> Toast.makeText(getContext(), "Failed loading users from database", Toast.LENGTH_SHORT).show());
+        writePairCountToScreen();
     }
 
     private void selectItemAtPosition(int position) {
@@ -72,7 +76,6 @@ public class UserListFragment extends Fragment {
     }
 
     public void createPair() {
-        //TODO: Add pair to db
         if (selectedItems.size() < 2) {
             Toast.makeText(getContext(), "You need to select two users for pair programming", Toast.LENGTH_SHORT).show();
             return;
@@ -80,17 +83,24 @@ public class UserListFragment extends Fragment {
         Pair pair = new Pair(new Date());
         pair.setPerson1(users.get(selectedItems.get(0)).getUsername());
         pair.setPerson2(users.get(selectedItems.get(1)).getUsername());
-        handler.addPair(pair).subscribe(
-                longs -> Toast.makeText(getContext(),
-                        "Added pair programming with: " + pair.getPerson1() + " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show(),
+        Disposable d = handler.addPair(pair).subscribe(
+                longs -> {
+                    Toast.makeText(getContext(),
+                            "Added pair programming with: " + pair.getPerson1() + " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
+                    writePairCountToScreen();
+                    resetSelectedPersons();
+                },
                 error -> Toast.makeText(getContext(), "Something went wrong while inserting to database.", Toast.LENGTH_SHORT).show());
-        resetSelectedPersons();
+    }
+
+    public void writePairCountToScreen() {
+        Disposable d = handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01, 00, 00, 00).getTimeInMillis()))
+                .subscribe(pairs -> numPairs.setText("#Pairs: " + pairs.size()));
     }
 
     public void resetSelectedPersons() {
         for (Integer i : selectedItems)
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-
         selectedItems.clear();
     }
 }
