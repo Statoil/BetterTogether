@@ -29,7 +29,7 @@ public class PairTest {
     private PersonDao mPersonDao;
     private SQLiteDB mDb;
     private Pair pair;
-    private GregorianCalendar calendar = new GregorianCalendar(1900, 01,1,00,00,00);
+    private GregorianCalendar calendar = new GregorianCalendar(1900, 01, 1, 00, 00, 00);
     private Date date = new Date(calendar.getTimeInMillis());
 
     @Before
@@ -41,11 +41,11 @@ public class PairTest {
     }
 
     @After
-    public void closeDb(){
+    public void closeDb() {
         mDb.close();
     }
 
-    private void addPairToDB(){
+    private void addPairToDB() {
         Person esog = new Person("esog");
         Person ohald = new Person("ohald");
         mPersonDao.insertPerson(esog);
@@ -59,19 +59,18 @@ public class PairTest {
 
 
     @Test
-    public void addPairToEmptyDBGivesOnePairInDB(){
+    public void addPairToEmptyDBGivesOnePairInDB() {
         addPairToDB();
         assertThat(1, equalTo(mPairDao.getHistory(date).size()));
     }
 
     @Test
-    public void deletePairFromDBRemovesPairFromDB(){
+    public void deletePairFromDBRemovesPairFromDB() {
         addPairToDB();
         mPairDao.deletePair(pair);
-
-       assertThat(mPairDao.getTimesPairProgrammed("ohald"), equalTo(0));
-       assertThat(mPairDao.getTimesPairProgrammed("esog"), equalTo(0));
-       assertThat(mPairDao.getPairProgrammingTotalFromDate(date), equalTo(0));
+        assertThat(mPairDao.getTimesPairProgrammed("ohald"), equalTo(0));
+        assertThat(mPairDao.getTimesPairProgrammed("esog"), equalTo(0));
+        assertThat(mPairDao.getPairProgrammingTotalFromDate(date), equalTo(0));
     }
 
 

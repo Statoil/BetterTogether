@@ -39,7 +39,7 @@ public interface RewardDao {
     long addReward(Reward reset);
 
     @Insert(onConflict = REPLACE)
-    long[] addThresholds(Threshold ... newThresholds);
+    long[] addThresholds(Threshold... newThresholds);
 
     @Update
     int setThreshold(Threshold newThreshold);

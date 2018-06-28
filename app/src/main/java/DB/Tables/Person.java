@@ -6,11 +6,6 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
-
-
 
 @Entity(tableName = "people_table")
 public class Person {
@@ -72,7 +67,7 @@ public class Person {
     }
 
 
-    public static Person[] initialUsers(){
+    public static Person[] initialUsers() {
         Person[] p = new Person[3];
         p[0] = (new Person("esog", "Eirin", "Sognnes"));
         p[1] = (new Person("ohald", "øyvor", "haldorsen"));

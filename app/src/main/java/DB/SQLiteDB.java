@@ -5,7 +5,6 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
-import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -31,8 +30,8 @@ public abstract class SQLiteDB extends RoomDatabase {
 
     public abstract PairDao pairDao();
 
-    public static SQLiteDB getInstance(Context context){
-        if (INSTANCE == null){
+    public static SQLiteDB getInstance(Context context) {
+        if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder
                     (context.getApplicationContext()
                             , SQLiteDB.class

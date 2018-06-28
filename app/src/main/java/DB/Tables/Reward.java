@@ -5,6 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
+
 import DB.RewardType;
 
 @Entity(tableName = "reward_table")
@@ -18,7 +19,7 @@ public class Reward {
 
     private boolean usedReward;
 
-    public Reward(Date date, @NonNull RewardType type){
+    public Reward(Date date, @NonNull RewardType type) {
         this.date = date;
         this.type = type;
         this.usedReward = false;

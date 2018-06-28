@@ -4,8 +4,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
-
 import DB.RewardType;
 
 @Entity(tableName = "threshold_table")
@@ -34,7 +32,7 @@ public class Threshold {
         return threshold;
     }
 
-    public static Threshold[] initialThresholds(){
+    public static Threshold[] initialThresholds() {
         Threshold[] t = new Threshold[2];
         t[0] = new Threshold(RewardType.CAKE, 50);
         t[1] = new Threshold(RewardType.PIZZA, 100);
