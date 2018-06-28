@@ -6,19 +6,28 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import DB.DatabaseThreadHandler;
+import DB.Tables.Pair;
+import DB.Tables.Person;
 
 public class UserListFragment extends Fragment {
 
-    private String[] testData = {"1", "2", "3", "4"};
-
     private ArrayList<Integer> selectedItems;
 
+    private List<Person> users;
     private GridView gridView;
+    private TextView numPairs;
+
+    private DatabaseThreadHandler handler;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,30 +37,18 @@ public class UserListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         gridView = getView().findViewById(R.id.user_list);
-        Button okBtn = getView().findViewById(R.id.create_pair_button);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createPair();
-            }
-        });
-        Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetSelectedPersons();
-            }
-        });
-        selectedItems = new ArrayList<>();
+        numPairs = getView().findViewById(R.id.num_of_pairs);
+        handler = new DatabaseThreadHandler(getContext());
 
-        UserListAdapter adapter = new UserListAdapter(this.getContext(), testData);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                selectItemAtPosition(position);
-            }
-        });
+        Button okBtn = getView().findViewById(R.id.create_pair_button);
+        okBtn.setOnClickListener(view1 -> createPair());
+
+        Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
+        cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
+        selectedItems = new ArrayList<>();
+        handler.allPersons().subscribe(
+                persons -> setUpGridView(persons),
+                error -> Toast.makeText(getContext(), "Failed loading users from database", Toast.LENGTH_SHORT).show());
     }
 
     private void selectItemAtPosition(int position) {
@@ -67,8 +64,26 @@ public class UserListFragment extends Fragment {
         gridView.getChildAt(position).setBackgroundColor(Color.argb(126, 0, 255, 0));
     }
 
+    private void setUpGridView(List<Person> persons) {
+        users = persons;
+        UserListAdapter adapter = new UserListAdapter(getContext(), users);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener((adapterView, view1, position, l) -> selectItemAtPosition(position));
+    }
+
     public void createPair() {
         //TODO: Add pair to db
+        if (selectedItems.size() < 2) {
+            Toast.makeText(getContext(), "You need to select two users for pair programming", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Pair pair = new Pair(new Date());
+        pair.setPerson1(users.get(selectedItems.get(0)).getUsername());
+        pair.setPerson2(users.get(selectedItems.get(1)).getUsername());
+        handler.addPair(pair).subscribe(
+                longs -> Toast.makeText(getContext(),
+                        "Added pair programming with: " + pair.getPerson1() + " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show(),
+                error -> Toast.makeText(getContext(), "Something went wrong while inserting to database.", Toast.LENGTH_SHORT).show());
         resetSelectedPersons();
     }
 

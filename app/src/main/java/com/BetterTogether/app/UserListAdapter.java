@@ -1,20 +1,22 @@
 package com.BetterTogether.app;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
+
+import DB.Tables.Person;
 
 public class UserListAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
-    private String[] dataSet;
+    private List<Person> dataSet;
 
-    public UserListAdapter(Context context, String[] dataSet) {
+    public UserListAdapter(Context context, List<Person> dataSet) {
         this.dataSet = dataSet;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -22,7 +24,7 @@ public class UserListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         if (dataSet != null) {
-            return dataSet.length;
+            return dataSet.size();
         } else {
             return 0;
         }
@@ -30,8 +32,8 @@ public class UserListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        if (i < dataSet.length) {
-            return dataSet[i];
+        if (i < dataSet.size()) {
+            return dataSet.get(i);
         } else return -1;
     }
 
@@ -44,8 +46,8 @@ public class UserListAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
         View rowView = inflater.inflate(R.layout.example_list, parent, false);
         TextView name = rowView.findViewById(R.id.username);
-
-        name.setText(dataSet[position]);
+        String displayedText = dataSet.get(position).getFirstName() + " " + dataSet.get(position).getLastName();
+        name.setText(displayedText);
         return rowView;
     }
 }
