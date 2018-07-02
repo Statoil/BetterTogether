@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import DB.DatabaseThreadHandler;
+import DB.RewardType;
 import DB.Tables.Pair;
 import DB.Tables.Person;
 import io.reactivex.disposables.Disposable;
@@ -35,11 +37,17 @@ public class UserListFragment extends Fragment {
 
     private ArrayList<Integer> selectedItems;
 
+    private int cakeThreshold;
+    private int pizzaThreshold;
+
     private List<Person> users;
 
     private GridView gridView;
     private TextView numPairs;
     private ImageView user_image;
+
+    private TextView pizzaText;
+    private TextView cakeText;
 
     private DatabaseThreadHandler handler;
 
@@ -52,10 +60,14 @@ public class UserListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         gridView = getView().findViewById(R.id.user_list);
         numPairs = getView().findViewById(R.id.num_of_pairs);
+
         handler = new DatabaseThreadHandler(getContext());
 
         Button add_user = getView().findViewById(R.id.add_user);
         add_user.setOnClickListener(view_user -> add_user());
+
+        pizzaText = getView().findViewById(R.id.pizza_text);
+        cakeText = getView().findViewById(R.id.cake_text);
 
         Button okBtn = getView().findViewById(R.id.create_pair_button);
         okBtn.setOnClickListener(view1 -> createPair());
@@ -164,7 +176,11 @@ public class UserListFragment extends Fragment {
 
     private void writePairCountToScreen() {
         Disposable d = handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01, 00, 00, 00).getTimeInMillis()))
-                .subscribe(pairs -> numPairs.setText("#Pairs: " + pairs.size()));
+                .subscribe(pairs -> {
+                    numPairs.setText("#Pairs: " + pairs.size());
+                    pizzaText.setText(pairs.size() + "/100");
+                    cakeText.setText(pairs.size() + "/50");
+                });
     }
 
     public void resetSelectedPersons() {

@@ -3,10 +3,56 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/pizza_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/pizza_text"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/reset" />
+
+        <Button
+            android:id="@+id/reset_pizza"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/reset" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cake_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pizza_progress"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/cake_text"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/reset" />
+
+        <Button
+            android:id="@+id/reset_cake"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/reset" />
+
+    </LinearLayout>
+
     <GridView
         android:id="@+id/user_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cake_progress"
         android:gravity="center"
         android:horizontalSpacing="10dp"
         android:listSelector="#00000000"
@@ -18,8 +64,8 @@
         android:id="@+id/pair_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:layout_marginBottom="110dp"
         android:gravity="center_horizontal">
 
@@ -47,7 +93,7 @@
         android:id="@+id/num_of_pairs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/pairs"
         android:layout_alignBottom="@+id/pair_buttons"
-        android:gravity="end"/>
+        android:gravity="end"
+        android:text="@string/pairs" />
 </RelativeLayout>
