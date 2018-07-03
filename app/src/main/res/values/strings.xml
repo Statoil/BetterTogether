@@ -2,6 +2,10 @@
     <string name="app_name">app</string>
     <string name="cancel">cancel</string>
     <string name="ok">ok</string>
-    <string name="pairs">Pairs: #</string>
+    <string name="ppm_num">Number of PPM events:</string>
     <string name="reset">reset</string>
+    <string name="pizza_beer"><![CDATA[Pizza & Beer:]]></string>
+    <string name="cake">Cake:</string>
+    <string name="claimable">Currently claimable:</string>
+    <string name="last_ppm_event">Last PPM event:</string>
 </resources>

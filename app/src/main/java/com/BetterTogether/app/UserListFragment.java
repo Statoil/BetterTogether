@@ -1,5 +1,6 @@
 package com.BetterTogether.app;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +46,15 @@ public class UserListFragment extends Fragment {
     private TextView numPairs;
     private ImageView user_image;
 
-    private TextView pizzaText;
-    private TextView cakeText;
+    private List<Pair> allPairs;
+    private List<Pair> pizzaPairs;
+    private List<Pair> cakePairs;
+
+
+    private TextView pizzaCount;
+    private TextView cakeCount;
+    private TextView pizzaClaim;
+    private TextView cakeClaim;
 
     private DatabaseThreadHandler handler;
 
@@ -59,15 +66,11 @@ public class UserListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         gridView = getView().findViewById(R.id.user_list);
-        numPairs = getView().findViewById(R.id.num_of_pairs);
 
         handler = new DatabaseThreadHandler(getContext());
 
         Button add_user = getView().findViewById(R.id.add_user);
         add_user.setOnClickListener(view_user -> add_user());
-
-        pizzaText = getView().findViewById(R.id.pizza_text);
-        cakeText = getView().findViewById(R.id.cake_text);
 
         Button okBtn = getView().findViewById(R.id.create_pair_button);
         okBtn.setOnClickListener(view1 -> createPair());
@@ -78,7 +81,8 @@ public class UserListFragment extends Fragment {
         Disposable d = handler.allActivePersons().subscribe(
                 persons -> setUpGridView(persons),
                 error -> Toast.makeText(getContext(), "Failed loading users from database", Toast.LENGTH_SHORT).show());
-        writePairCountToScreen();
+        getPairCount();
+        getThresholds();
     }
 
     private void selectItemAtPosition(int position) {
@@ -113,7 +117,7 @@ public class UserListFragment extends Fragment {
                 longs -> {
                     Toast.makeText(getContext(),
                             "Added pair programming with: " + pair.getPerson1() + " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
-                    writePairCountToScreen();
+                    getPairCount();
                     resetSelectedPersons();
                 },
                 error -> Toast.makeText(getContext(), "Something went wrong while inserting to database.", Toast.LENGTH_SHORT).show());
@@ -141,7 +145,7 @@ public class UserListFragment extends Fragment {
             add.setOnClickListener(btn -> submitUser(dialog, username, firstName, lastName));
             cancel.setOnClickListener(btn -> dialog.dismiss());
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -164,23 +168,67 @@ public class UserListFragment extends Fragment {
     }
 
 
-    private void submitUser(Dialog dlog, EditText username, EditText firstName, EditText lastName){
+    private void submitUser(Dialog dlog, EditText username, EditText firstName, EditText lastName) {
         dlog.dismiss();
         Person newUser = new Person(username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
-        if (users.contains(newUser)){
+        if (users.contains(newUser)) {
             Toast.makeText(getContext(), "User already exists", Toast.LENGTH_SHORT).show();
             return;
         }
-        Toast.makeText(getContext(), "Welcome "+newUser.getUsername(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Welcome " + newUser.getUsername(), Toast.LENGTH_SHORT).show();
     }
 
-    private void writePairCountToScreen() {
-        Disposable d = handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01, 00, 00, 00).getTimeInMillis()))
+    @SuppressLint("CheckResult")
+    private void getPairCount() {
+        handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01, 00, 00, 00).getTimeInMillis()))
                 .subscribe(pairs -> {
-                    numPairs.setText("#Pairs: " + pairs.size());
-                    pizzaText.setText(pairs.size() + "/100");
-                    cakeText.setText(pairs.size() + "/50");
+                    allPairs = pairs;
+                    writeStatusIfAble();
                 });
+        handler.getPairsSinceLastReward(RewardType.CAKE).subscribe(pairs -> {
+            cakePairs = pairs;
+            writeStatusIfAble();
+        });
+        handler.getPairsSinceLastReward(RewardType.PIZZA).subscribe(pairs -> {
+            pizzaPairs = pairs;
+            writeStatusIfAble();
+        });
+    }
+
+    @SuppressLint("CheckResult")
+    private void getThresholds() {
+        handler.getThreshold(RewardType.CAKE).subscribe(threshold -> {
+            cakeThreshold = threshold;
+            writeStatusIfAble();
+        });
+        handler.getThreshold(RewardType.PIZZA).subscribe(threshold -> {
+            pizzaThreshold = threshold;
+            writeStatusIfAble();
+        });
+    }
+
+    private void writeStatusIfAble() {
+        if (cakeThreshold == 0 || pizzaThreshold == 0 || cakePairs == null || pizzaPairs == null || allPairs == null)
+            return;
+        numPairs = getView().findViewById(R.id.num_of_pairs);
+
+        pizzaCount = getView().findViewById(R.id.pizza_text);
+        cakeCount = getView().findViewById(R.id.cake_text);
+
+        pizzaClaim = getView().findViewById(R.id.pizza_iou);
+        cakeClaim = getView().findViewById(R.id.cake_iou);
+
+        numPairs.setText(Integer.toString(allPairs.size()));
+
+        int modPizza = pizzaPairs.size() % pizzaThreshold;
+        int modCake = cakePairs.size() % cakeThreshold;
+        pizzaCount.setText(Integer.toString(modPizza) + "/" + Integer.toString(pizzaThreshold));
+        cakeCount.setText(Integer.toString(modCake) + "/" + Integer.toString(cakeThreshold));
+        Double pr = Math.floor(pizzaPairs.size() / pizzaThreshold);
+        pizzaClaim.setText(Integer.toString(pr.intValue()));
+        Double cr = Math.floor(cakePairs.size() / cakeThreshold);
+        cakeClaim.setText(Integer.toString(cr.intValue()));
+
     }
 
     public void resetSelectedPersons() {
