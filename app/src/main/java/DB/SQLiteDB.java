@@ -9,8 +9,13 @@ import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+<<<<<<< HEAD
 import java.util.Arrays;
 import java.util.List;
+=======
+import java.util.Date;
+import java.util.GregorianCalendar;
+>>>>>>> fixed queries to get reward since last reward. Lowered threshold for testing purpose.
 import java.util.concurrent.Executors;
 
 import JSONReader.ImageReader;

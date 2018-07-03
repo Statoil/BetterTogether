@@ -29,7 +29,6 @@ import DB.DatabaseThreadHandler;
 import DB.RewardType;
 import DB.Tables.Pair;
 import DB.Tables.Person;
-import io.reactivex.disposables.Disposable;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -39,6 +38,9 @@ public class UserListFragment extends Fragment {
 
     private int cakeThreshold;
     private int pizzaThreshold;
+
+    private int unusedCake;
+    private int unusedPizza;
 
     private List<Person> users;
 
@@ -63,25 +65,30 @@ public class UserListFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_user_list, container, false);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         gridView = getView().findViewById(R.id.user_list);
-
         handler = new DatabaseThreadHandler(getContext());
+        selectedItems = new ArrayList<>();
+        unusedPizza = -1;
+        unusedCake = -1;
 
         Button add_user = getView().findViewById(R.id.add_user);
         add_user.setOnClickListener(view_user -> add_user());
 
         Button okBtn = getView().findViewById(R.id.create_pair_button);
-        okBtn.setOnClickListener(view1 -> createPair());
+        okBtn.setOnClickListener(btn -> createPair());
 
         Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
         cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
         selectedItems = new ArrayList<>();
-        Disposable d = handler.allActivePersons().subscribe(
+        handler.allActivePersons().subscribe(
                 persons -> setUpGridView(persons),
                 error -> Toast.makeText(getContext(), "Failed loading users from database", Toast.LENGTH_SHORT).show());
-        getPairCount();
+
+        getUnusedRewards();
+        getPairs();
         getThresholds();
     }
 
@@ -105,6 +112,7 @@ public class UserListFragment extends Fragment {
         gridView.setOnItemClickListener((adapterView, view1, position, l) -> selectItemAtPosition(position));
     }
 
+    @SuppressLint("CheckResult")
     private void createPair() {
         if (selectedItems.size() < 2) {
             Toast.makeText(getContext(), "You need to select two users for pair programming", Toast.LENGTH_SHORT).show();
@@ -113,11 +121,11 @@ public class UserListFragment extends Fragment {
         Pair pair = new Pair(new Date());
         pair.setPerson1(users.get(selectedItems.get(0)).getUsername());
         pair.setPerson2(users.get(selectedItems.get(1)).getUsername());
-        Disposable d = handler.addPair(pair).subscribe(
+        handler.addPair(pair).subscribe(
                 longs -> {
                     Toast.makeText(getContext(),
                             "Added pair programming with: " + pair.getPerson1() + " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
-                    getPairCount();
+                    getPairs();
                     resetSelectedPersons();
                 },
                 error -> Toast.makeText(getContext(), "Something went wrong while inserting to database.", Toast.LENGTH_SHORT).show());
@@ -179,36 +187,52 @@ public class UserListFragment extends Fragment {
     }
 
     @SuppressLint("CheckResult")
-    private void getPairCount() {
+    private void getUnusedRewards() {
+        handler.getUnusedRewardsCount(RewardType.CAKE).subscribe(count -> {
+            unusedCake = count;
+            writeStatusIfAble();
+        });
+
+        handler.getUnusedRewardsCount(RewardType.PIZZA).subscribe(count -> {
+            unusedPizza = count;
+            writeStatusIfAble();
+        });
+    }
+
+    @SuppressLint("CheckResult")
+    private void getPairs() {
         handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01, 00, 00, 00).getTimeInMillis()))
                 .subscribe(pairs -> {
                     allPairs = pairs;
                     writeStatusIfAble();
                 });
-        handler.getPairsSinceLastReward(RewardType.CAKE).subscribe(pairs -> {
-            cakePairs = pairs;
-            writeStatusIfAble();
-        });
+
         handler.getPairsSinceLastReward(RewardType.PIZZA).subscribe(pairs -> {
             pizzaPairs = pairs;
+            writeStatusIfAble();
+        });
+
+        handler.getPairsSinceLastReward(RewardType.CAKE).subscribe(pairs -> {
+            cakePairs = pairs;
             writeStatusIfAble();
         });
     }
 
     @SuppressLint("CheckResult")
     private void getThresholds() {
-        handler.getThreshold(RewardType.CAKE).subscribe(threshold -> {
-            cakeThreshold = threshold;
-            writeStatusIfAble();
-        });
         handler.getThreshold(RewardType.PIZZA).subscribe(threshold -> {
             pizzaThreshold = threshold;
+            writeStatusIfAble();
+        });
+
+        handler.getThreshold(RewardType.CAKE).subscribe(threshold -> {
+            cakeThreshold = threshold;
             writeStatusIfAble();
         });
     }
 
     private void writeStatusIfAble() {
-        if (cakeThreshold == 0 || pizzaThreshold == 0 || cakePairs == null || pizzaPairs == null || allPairs == null)
+        if (cakeThreshold == 0 || pizzaThreshold == 0 || cakePairs == null || pizzaPairs == null || allPairs == null || unusedPizza == -1 || unusedCake == -1)
             return;
         numPairs = getView().findViewById(R.id.num_of_pairs);
 
@@ -220,14 +244,11 @@ public class UserListFragment extends Fragment {
 
         numPairs.setText(Integer.toString(allPairs.size()));
 
-        int modPizza = pizzaPairs.size() % pizzaThreshold;
-        int modCake = cakePairs.size() % cakeThreshold;
-        pizzaCount.setText(Integer.toString(modPizza) + "/" + Integer.toString(pizzaThreshold));
-        cakeCount.setText(Integer.toString(modCake) + "/" + Integer.toString(cakeThreshold));
-        Double pr = Math.floor(pizzaPairs.size() / pizzaThreshold);
-        pizzaClaim.setText(Integer.toString(pr.intValue()));
-        Double cr = Math.floor(cakePairs.size() / cakeThreshold);
-        cakeClaim.setText(Integer.toString(cr.intValue()));
+        pizzaCount.setText(Integer.toString(pizzaPairs.size()) + "/" + Integer.toString(pizzaThreshold));
+        cakeCount.setText(Integer.toString(cakePairs.size()) + "/" + Integer.toString(cakeThreshold));
+
+        pizzaClaim.setText(Integer.toString(unusedPizza));
+        cakeClaim.setText(Integer.toString(unusedCake));
 
     }
 

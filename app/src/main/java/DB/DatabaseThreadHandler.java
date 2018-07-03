@@ -59,6 +59,13 @@ public class DatabaseThreadHandler {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Maybe<Integer> getUnusedRewardsCount(RewardType type) {
+        return Maybe.fromCallable(()
+                -> rewDao.numberOfUnusedRewards(type))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Maybe<List<Pair>> getPairsSinceLastReward(RewardType rewardType) {
         return Maybe.fromCallable(()
                 -> pairDao.getPairsSinceLastReward(rewardType))

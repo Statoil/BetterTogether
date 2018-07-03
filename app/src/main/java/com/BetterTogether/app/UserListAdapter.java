@@ -54,7 +54,7 @@ public class UserListAdapter extends BaseAdapter {
         ImageView imageView = rowView.findViewById(R.id.profile_image);
         Bitmap bitmap = ImageReader.byteArrayToBitmap(image);
         imageView.setImageBitmap(bitmap);
-        
+
         TextView name = rowView.findViewById(R.id.username);
         String displayedText = dataSet.get(position).getFirstName() + " " + dataSet.get(position).getLastName();
         name.setText(displayedText);
