@@ -9,16 +9,10 @@ import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-<<<<<<< HEAD
 import java.util.Arrays;
 import java.util.List;
-=======
-import java.util.Date;
-import java.util.GregorianCalendar;
->>>>>>> fixed queries to get reward since last reward. Lowered threshold for testing purpose.
 import java.util.concurrent.Executors;
 
-import JSONReader.ImageReader;
 import DB.Dao.PairDao;
 import DB.Dao.PersonDao;
 import DB.Dao.RewardDao;
@@ -26,6 +20,7 @@ import DB.Tables.Pair;
 import DB.Tables.Person;
 import DB.Tables.Reward;
 import DB.Tables.Threshold;
+import JSONReader.ImageReader;
 import JSONReader.JSONReader;
 
 @Database(entities = {Person.class, Pair.class, Reward.class, Threshold.class}, version = 2, exportSchema = false)

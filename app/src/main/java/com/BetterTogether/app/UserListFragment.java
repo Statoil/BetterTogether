@@ -271,6 +271,12 @@ public class UserListFragment extends Fragment {
         pizzaClaim.setText(Integer.toString(unusedPizza));
         cakeClaim.setText(Integer.toString(unusedCake));
 
+        if(allPairs.isEmpty()){
+            return;
+        }
+        TextView lastPair = getView().findViewById(R.id.last_event);
+        lastPair.setText(allPairs.get(allPairs.size()-1).getPerson1() + " & " + allPairs.get(allPairs.size()-1).getPerson2());
+
     }
 
     @SuppressLint("CheckResult")
@@ -286,6 +292,5 @@ public class UserListFragment extends Fragment {
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
     }
-
 
 }
