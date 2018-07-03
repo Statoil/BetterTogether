@@ -29,6 +29,7 @@ import DB.DatabaseThreadHandler;
 import DB.RewardType;
 import DB.Tables.Pair;
 import DB.Tables.Person;
+import DB.Tables.Reward;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -71,6 +72,8 @@ public class UserListFragment extends Fragment {
         gridView = getView().findViewById(R.id.user_list);
         handler = new DatabaseThreadHandler(getContext());
         selectedItems = new ArrayList<>();
+        pizzaThreshold = -1;
+        cakeThreshold = -1;
         unusedPizza = -1;
         unusedCake = -1;
 
@@ -86,10 +89,9 @@ public class UserListFragment extends Fragment {
         handler.allActivePersons().subscribe(
                 persons -> setUpGridView(persons),
                 error -> Toast.makeText(getContext(), "Failed loading users from database", Toast.LENGTH_SHORT).show());
-
-        getUnusedRewards();
         getPairs();
         getThresholds();
+        getUnusedRewards();
     }
 
     private void selectItemAtPosition(int position) {
@@ -234,6 +236,25 @@ public class UserListFragment extends Fragment {
     private void writeStatusIfAble() {
         if (cakeThreshold == 0 || pizzaThreshold == 0 || cakePairs == null || pizzaPairs == null || allPairs == null || unusedPizza == -1 || unusedCake == -1)
             return;
+
+        if (cakePairs.size() == cakeThreshold) {
+            cakePairs = null;
+            unusedCake = -1;
+            pizzaPairs = null;
+            unusedPizza = -1;
+            addReward(RewardType.CAKE);
+            return;
+        }
+
+        if(pizzaPairs.size() == pizzaThreshold) {
+            cakePairs = null;
+            unusedCake = -1;
+            pizzaPairs = null;
+            unusedPizza = -1;
+            addReward(RewardType.PIZZA);
+            return;
+        }
+
         numPairs = getView().findViewById(R.id.num_of_pairs);
 
         pizzaCount = getView().findViewById(R.id.pizza_text);
@@ -252,9 +273,19 @@ public class UserListFragment extends Fragment {
 
     }
 
-    public void resetSelectedPersons() {
+    @SuppressLint("CheckResult")
+    private void addReward(RewardType type){
+        handler.addNewReward(new Reward(new Date(), type)).subscribe(longs -> {
+            getPairs();
+            getUnusedRewards();
+        });
+    }
+
+    private void resetSelectedPersons() {
         for (Integer i : selectedItems)
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
     }
+
+
 }
