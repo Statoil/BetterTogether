@@ -35,8 +35,6 @@ import JSONReader.ImageReader;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-
-
 import static android.app.Activity.RESULT_OK;
 
 public class UserListFragment extends Fragment {
@@ -226,8 +224,6 @@ public class UserListFragment extends Fragment {
             userImage.setImageBitmap(imageBitmap);
             userImageBitmap = imageBitmap;
         }
-
-
     }
 
     private void writeStatusIfAble() {

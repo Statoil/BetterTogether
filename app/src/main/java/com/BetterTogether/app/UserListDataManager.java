@@ -83,7 +83,7 @@ public class UserListDataManager {
     void addUser(String userName, String firstName, String lastName, byte[] img) {
         Person newUser = new Person(userName, firstName, lastName, img, true);
         if (users.contains(newUser)){
-            Toast.makeText(userListFragment.getContext(), "User already exists", Toast.LENGTH_SHORT).show();
+            Toast.makeText(userListFragment.getContext(), "User already exists: " + userName, Toast.LENGTH_SHORT).show();
             return;
         }
         handler.addPerson(newUser).subscribe(num -> {
