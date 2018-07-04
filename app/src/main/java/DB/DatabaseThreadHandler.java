@@ -45,6 +45,11 @@ public class DatabaseThreadHandler {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Single<Integer> udpatePerson(Person person){
+        return Single.fromCallable(()
+        -> personDao.updatePerson(person)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Single<Long> addPair(Pair pair) {
         return Single.fromCallable(()
                 -> pairDao.insertPair(pair))
