@@ -107,6 +107,7 @@ public abstract class SQLiteDB extends RoomDatabase {
                 p.setImage(ImageReader.imageToByte(context, "unknown"));
                 personDao.updatePerson(p);
             }
+
         }
 
     }
