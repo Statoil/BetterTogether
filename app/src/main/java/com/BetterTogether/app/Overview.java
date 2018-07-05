@@ -11,6 +11,9 @@ import com.BetterTogether.app.adapters.TabAdapter;
 import DB.DatabaseThreadHandler;
 import DB.SQLiteDB;
 import JSONReader.ParsedPerson;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class Overview extends AppCompatActivity {
@@ -28,7 +31,8 @@ public class Overview extends AppCompatActivity {
         ActionBar bar = getSupportActionBar();
         bar.hide();
 
-        TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(), new UserListFragment(), new GraphFragment());
+        TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(),
+                new UserListFragment(), new GraphFragment());
         ViewPager viewPager = findViewById(R.id.pager);
         viewPager.setAdapter(tabAdapter);
         TabLayout tabLayout = findViewById(R.id.tabs);
@@ -39,7 +43,8 @@ public class Overview extends AppCompatActivity {
 
     private void createDBWithHandler() {
         db = SQLiteDB.getInstance(this);
-        handler = new DatabaseThreadHandler(this);
+        handler = new DatabaseThreadHandler(this,
+                Schedulers.io(), AndroidSchedulers.mainThread());
     }
 
     private void testAddToJSONFile(){

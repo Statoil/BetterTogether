@@ -26,10 +26,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import DB.DatabaseThreadHandler;
 import DB.RewardType;
 import DB.Tables.Pair;
 import DB.Tables.Person;
 import JSONReader.ImageReader;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -56,14 +59,17 @@ public class UserListFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_user_list, container, false);
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        manager = new UserListDataManager(this);
+        manager = new UserListDataManager(this,
+                new DatabaseThreadHandler(getContext(), Schedulers.io(),
+                        AndroidSchedulers.mainThread()));
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
 
@@ -106,14 +112,17 @@ public class UserListFragment extends Fragment {
         users = persons;
         UserListAdapter adapter = new UserListAdapter(getContext(), users);
         gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener((adapterView, view, position, l) -> selectItemAtPosition(position));
-        gridView.setOnItemLongClickListener(((adapterView, view, position, l) -> setUpAlertDialog(persons.get(position))));
+        gridView.setOnItemClickListener((adapterView, view, position, l) ->
+                selectItemAtPosition(position));
+        gridView.setOnItemLongClickListener(((adapterView, view, position, l) ->
+                setUpAlertDialog(persons.get(position))));
     }
 
     @SuppressLint("CheckResult")
     private void createPair() {
         if (selectedItems.size() < 2) {
-            Toast.makeText(getContext(), "You need to select two users for pair programming", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "You need to select two users for pair programming",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         Pair pair = new Pair(new Date());
@@ -125,7 +134,8 @@ public class UserListFragment extends Fragment {
 
     private boolean setUpAlertDialog(Person person) {
         try {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View popupView = inflater.inflate(R.layout.popup_layout, null);
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -159,9 +169,12 @@ public class UserListFragment extends Fragment {
             add.setOnClickListener(btn -> {
                 dialog.dismiss();
                 if (person == null)
-                    manager.addUser(username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
+                    manager.addUser(username.getText().toString(),
+                            firstName.getText().toString(), lastName.getText().toString());
                 else
-                    manager.editUser(person, firstName.getText().toString(), lastName.getText().toString(), ((BitmapDrawable) userImage.getDrawable()).getBitmap());
+                    manager.editUser(person, firstName.getText().toString(),
+                            lastName.getText().toString(),
+                            ((BitmapDrawable) userImage.getDrawable()).getBitmap());
             });
             cancel.setOnClickListener(btn -> dialog.dismiss());
             return true;
@@ -188,7 +201,8 @@ public class UserListFragment extends Fragment {
     }
 
     private void writeStatusIfAble() {
-        if (cakeThreshold == 0 || pizzaThreshold == 0 || cakePairs == null || pizzaPairs == null || allPairs == null || unusedPizza == -1 || unusedCake == -1)
+        if (cakeThreshold == 0 || pizzaThreshold == 0 || cakePairs == null
+                || pizzaPairs == null || allPairs == null || unusedPizza == -1 || unusedCake == -1)
             return;
 
         if (cakePairs.size() == cakeThreshold) {
@@ -215,8 +229,10 @@ public class UserListFragment extends Fragment {
 
         numPairs.setText(Integer.toString(allPairs.size()));
 
-        pizzaCount.setText(Integer.toString(pizzaPairs.size()) + "/" + Integer.toString(pizzaThreshold));
-        cakeCount.setText(Integer.toString(cakePairs.size()) + "/" + Integer.toString(cakeThreshold));
+        pizzaCount.setText(Integer.toString(pizzaPairs.size()) + "/" +
+                Integer.toString(pizzaThreshold));
+        cakeCount.setText(Integer.toString(cakePairs.size()) + "/" +
+                Integer.toString(cakeThreshold));
 
         pizzaClaim.setText(Integer.toString(unusedPizza));
         cakeClaim.setText(Integer.toString(unusedCake));
@@ -225,7 +241,8 @@ public class UserListFragment extends Fragment {
             return;
         }
         TextView lastPair = getView().findViewById(R.id.last_event);
-        lastPair.setText(allPairs.get(allPairs.size() - 1).getPerson1() + " & " + allPairs.get(allPairs.size() - 1).getPerson2());
+        lastPair.setText(allPairs.get(allPairs.size() - 1).getPerson1() +
+                " & " + allPairs.get(allPairs.size() - 1).getPerson2());
 
     }
 
