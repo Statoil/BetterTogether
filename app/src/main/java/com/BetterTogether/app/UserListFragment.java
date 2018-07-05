@@ -36,6 +36,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 
+
 import static android.app.Activity.RESULT_OK;
 
 public class UserListFragment extends Fragment {
@@ -209,6 +210,7 @@ public class UserListFragment extends Fragment {
             userImageBitmap = imageBitmap;
         }
 
+
     }
 
     private void writeStatusIfAble() {
@@ -258,6 +260,7 @@ public class UserListFragment extends Fragment {
         TextView lastPair = getView().findViewById(R.id.last_event);
         lastPair.setText(allPairs.get(allPairs.size() - 1).getPerson1() +
                 " & " + allPairs.get(allPairs.size() - 1).getPerson2());
+
 
     }
 
