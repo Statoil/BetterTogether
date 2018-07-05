@@ -79,18 +79,19 @@ public class UserListDataManager {
         });
     }
 
+    @SuppressLint("CheckResult")
     void addUser(String userName, String firstName, String lastName, byte[] img) {
         Person newUser = new Person(userName, firstName, lastName, img, true);
-        if(users.contains(newUser)){
-            Toast.makeText(userListFragment.getContext(),"Username: " + userName + ", is already taken.", Toast.LENGTH_SHORT).show();
-        }
-
         if (users.contains(newUser)){
             Toast.makeText(userListFragment.getContext(), "User already exists", Toast.LENGTH_SHORT).show();
             return;
         }
+        handler.addPerson(newUser).subscribe(num -> {
+            Toast.makeText(userListFragment.getContext()
+                    , "Welcome " + newUser.getFirstName(), Toast.LENGTH_SHORT).show();
+            getActiveUsers();
 
-        handler.addPerson(newUser).subscribe(num -> Toast.makeText(userListFragment.getContext(), "Welcome " + newUser.getFirstName(), Toast.LENGTH_SHORT).show());
+        });
     }
 
     @SuppressLint("CheckResult")
