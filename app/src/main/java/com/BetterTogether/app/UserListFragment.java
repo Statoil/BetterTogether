@@ -20,9 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.BetterTogether.app.adapters.UserListAdapter;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
