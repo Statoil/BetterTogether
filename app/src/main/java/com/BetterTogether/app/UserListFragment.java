@@ -19,6 +19,7 @@ import com.BetterTogether.app.AlertDialogs.AddUserPopup;
 import com.BetterTogether.app.AlertDialogs.RewardPopup;
 
 import com.BetterTogether.app.adapters.UserListAdapter;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -196,6 +197,7 @@ public class UserListFragment extends Fragment implements Observer {
             RewardPopup popup = new RewardPopup(this);
             popup.whistle(RewardType.PIZZA);
             return;
+
         }
         if (manager.getCakePairs().size() == manager.getCakeThreshold()) {
             popupIsActive = true;
