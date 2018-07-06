@@ -126,7 +126,6 @@ public class DatabaseThreadHandler {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-
     public Maybe<List<Reward>> getEarliestUnusedReward(RewardType type) {
         return Maybe.fromCallable(()
                 -> rewDao.getEarliestUnusedReward(type))

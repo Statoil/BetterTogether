@@ -46,7 +46,6 @@ public class UserListFragment extends Fragment implements Observer {
 
     private boolean popupIsActive;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,6 +75,7 @@ public class UserListFragment extends Fragment implements Observer {
 
         Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
         cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
+
 
         Button claim_cake = getView().findViewById(R.id.reset_cake);
         claim_cake.setOnClickListener(btn -> {
@@ -214,6 +214,7 @@ public class UserListFragment extends Fragment implements Observer {
     private void writeStatus() {
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
+
         }
 
         TextView numPairs = getView().findViewById(R.id.num_of_pairs);
@@ -273,5 +274,7 @@ public class UserListFragment extends Fragment implements Observer {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             addUserPopup.setUserImage(imageBitmap);
         }
+
     }
+
 }
