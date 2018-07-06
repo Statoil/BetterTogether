@@ -109,10 +109,14 @@ public class UserListFragment extends Fragment {
 
         selectedItems = new ArrayList<>();
 
+        //add initial data to database
+        manager.refreshDB(getContext());
+        //get data from database
         manager.getActiveUsers();
         manager.getPairs();
         manager.getThresholds();
         manager.getUnusedRewards();
+
     }
 
     private void selectItemAtPosition(int position) {

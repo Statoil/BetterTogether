@@ -22,14 +22,11 @@ import io.reactivex.schedulers.Schedulers;
 public class Overview extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_READ_EXTERNAL = 1;
-    private SQLiteDB db;
-    private DatabaseThreadHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
-        createDBWithHandler();
 
         setSupportActionBar(findViewById(R.id.toolbar));
         ActionBar bar = getSupportActionBar();
@@ -50,14 +47,6 @@ public class Overview extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.bringToFront();
         tabLayout.setupWithViewPager(viewPager);
-
-    }
-
-
-    private void createDBWithHandler() {
-        db = SQLiteDB.getInstance(this);
-        handler = new DatabaseThreadHandler(this,
-                Schedulers.io(), AndroidSchedulers.mainThread());
     }
 
     private void testAddToJSONFile() {
