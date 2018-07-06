@@ -126,12 +126,14 @@ public class DatabaseThreadHandler {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+
     public Maybe<List<Reward>> getEarliestUnusedReward(RewardType type) {
         return Maybe.fromCallable(()
                 -> rewDao.getEarliestUnusedReward(type))
                 .subscribeOn(ps)
                 .observeOn(as);
     }
+
 
     public Single<Integer> useReward(Reward reward) {
         return Single.fromCallable(()
@@ -141,7 +143,4 @@ public class DatabaseThreadHandler {
 
     }
 
-    public void refreshDB(Context context) {
-        db.refreshDB(context);
-    }
 }

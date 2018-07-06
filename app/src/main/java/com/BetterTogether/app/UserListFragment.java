@@ -17,8 +17,8 @@ import android.widget.Toast;
 
 import com.BetterTogether.app.AlertDialogs.AddUserPopup;
 import com.BetterTogether.app.AlertDialogs.RewardPopup;
-import com.BetterTogether.app.adapters.UserListAdapter;
 
+import com.BetterTogether.app.adapters.UserListAdapter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -96,6 +96,7 @@ public class UserListFragment extends Fragment implements Observer {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void selectItemAtPosition(int position) {
@@ -207,8 +208,8 @@ public class UserListFragment extends Fragment implements Observer {
 
     public void setPopupIsActiveFalse() {
         this.popupIsActive = false;
-
     }
+
 
     private void writeStatus() {
         if (!popupIsActive) {

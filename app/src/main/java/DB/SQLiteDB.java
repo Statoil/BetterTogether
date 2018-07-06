@@ -8,10 +8,14 @@ import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 import DB.Dao.PairDao;
 import DB.Dao.PersonDao;
@@ -48,7 +52,13 @@ public abstract class SQLiteDB extends RoomDatabase {
                                 getInstance(context).rewardDao().addThresholds(JSONReader.parseThresholdsFromJSON(context));
                                 getInstance(context).rewardDao().addReward(JSONReader.parseRewardFromJSON(context));
                             });
-                        }})
+
+                        }
+                        @Override
+                        public void onOpen(@NonNull SupportSQLiteDatabase db) {
+
+                        }
+                    })
                     .allowMainThreadQueries()
                     .build();
         }
@@ -94,6 +104,7 @@ public abstract class SQLiteDB extends RoomDatabase {
     public abstract RewardDao rewardDao();
 
     public abstract PairDao pairDao();
+
 
     //Not useful when database cannot write to resources.
     /*
