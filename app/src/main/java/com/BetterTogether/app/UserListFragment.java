@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.BetterTogether.app.AlertDialogs.AddUserPopup;
 import com.BetterTogether.app.AlertDialogs.RewardPopup;
-
 import com.BetterTogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
@@ -196,7 +195,6 @@ public class UserListFragment extends Fragment implements Observer {
             RewardPopup popup = new RewardPopup(this);
             popup.whistle(RewardType.PIZZA);
             return;
-
         }
         if (manager.getCakePairs().size() == manager.getCakeThreshold()) {
             popupIsActive = true;
@@ -216,7 +214,6 @@ public class UserListFragment extends Fragment implements Observer {
     private void writeStatus() {
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
-
         }
 
         TextView numPairs = getView().findViewById(R.id.num_of_pairs);
@@ -228,7 +225,6 @@ public class UserListFragment extends Fragment implements Observer {
         TextView cakeClaim = getView().findViewById(R.id.cake_iou);
 
         numPairs.setText(Integer.toString(manager.getAllPairs().size()));
-
 
         pizzaCount.setText(Integer.toString(manager.getPizzaPairs().size()) + "/" +
                 Integer.toString(manager.getPizzaThreshold()));
