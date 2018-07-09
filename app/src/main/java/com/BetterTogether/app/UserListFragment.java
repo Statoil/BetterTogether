@@ -97,7 +97,6 @@ public class UserListFragment extends Fragment implements Observer {
                         Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     private void selectItemAtPosition(int position) {
@@ -213,6 +212,7 @@ public class UserListFragment extends Fragment implements Observer {
     }
 
 
+
     private void writeStatus() {
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
@@ -228,6 +228,7 @@ public class UserListFragment extends Fragment implements Observer {
         TextView cakeClaim = getView().findViewById(R.id.cake_iou);
 
         numPairs.setText(Integer.toString(manager.getAllPairs().size()));
+
 
         pizzaCount.setText(Integer.toString(manager.getPizzaPairs().size()) + "/" +
                 Integer.toString(manager.getPizzaThreshold()));
