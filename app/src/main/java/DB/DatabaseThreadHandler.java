@@ -133,7 +133,6 @@ public class DatabaseThreadHandler {
                 .observeOn(as);
     }
 
-
     public Single<Integer> useReward(Reward reward) {
         return Single.fromCallable(()
                 -> rewDao.updateReward(reward))
@@ -141,5 +140,6 @@ public class DatabaseThreadHandler {
                 .observeOn(as);
 
     }
+
 
 }
