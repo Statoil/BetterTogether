@@ -1,7 +1,6 @@
 package com.bettertogether.app.dialogs;
 
 import android.app.AlertDialog;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -51,7 +50,6 @@ public class RewardPopup extends PopupView {
             userListFragment.useReward(rewardType);
 
             Toast confirmMsg = Toast.makeText(userListFragment.getContext(), "You have claimed " + rewardType.toString(), Toast.LENGTH_SHORT);
-            confirmMsg.setGravity(Gravity.TOP | Gravity.LEFT, 0, 0);
             confirmMsg.show();
             dialog.dismiss();
         });
