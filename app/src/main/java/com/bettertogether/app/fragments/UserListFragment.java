@@ -1,6 +1,7 @@
 package com.bettertogether.app.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -88,6 +89,14 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int num = manager.getActiveUsers().size();
+        setGridColumnNumber(num);
+
     }
 
     private void selectItemAtPosition(int position) {
@@ -211,13 +220,27 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     public void updateGrid() {
         List<Person> persons = manager.getActiveUsers();
 
+        setGridColumnNumber(persons.size());
         UserListAdapter adapter = new UserListAdapter(getContext(), persons);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener((adapterView, view, position, l) ->
                 selectItemAtPosition(position));
 
-
         disableScrolling();
+    }
+
+    public void setGridColumnNumber(int people) {
+        int orientation = this.getResources().getConfiguration().orientation;
+        int numCols;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //calculate number of colums. 8 people fit in one column
+            numCols = (int) Math.ceil(people / 8.0);
+        } else {
+            //calculate number of colums. 4 people fit in one column
+            numCols = (int) Math.ceil(people / 4.0);
+        }
+        gridView.setNumColumns(numCols);
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
