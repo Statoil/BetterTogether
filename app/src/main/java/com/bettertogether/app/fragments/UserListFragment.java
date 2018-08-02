@@ -2,6 +2,7 @@ package com.bettertogether.app.fragments;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,13 +33,16 @@ import com.bettertogether.app.Person;
 
 
 public class UserListFragment extends Fragment implements DataUpdateListener {
-        private ArrayList<Integer> selectedItems;
+    private ArrayList<Integer> selectedItems;
 
     private DataManager manager;
-
     private GridView gridView;
-
     private boolean popupIsActive;
+
+    private Button claimCake;
+    private Button claimPizza;
+    private Button addPair;
+    private Button resetSelection;
 
 
     @Override
@@ -58,15 +62,15 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
 
-        Button okBtn = getView().findViewById(R.id.create_pair_button);
-        okBtn.setOnClickListener(btn -> createPair());
+        addPair = getView().findViewById(R.id.create_pair_button);
+        addPair.setOnClickListener(btn -> createPair());
 
-        Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
-        cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
+        resetSelection = getView().findViewById(R.id.reset_selection_button);
+        resetSelection.setOnClickListener(view12 -> resetSelectedPersons());
 
-        Button claim_cake = getView().findViewById(R.id.reset_cake);
-        claim_cake.setOnClickListener(btn -> {
-            if (manager.getUnusedCake() != 0) {
+        claimCake = getView().findViewById(R.id.reset_cake);
+        claimCake.setOnClickListener(btn -> {
+            if (manager.getUnusedCake() > 0) {
                 new RewardPopup(this).claimReward(RewardType.CAKE);
             } else {
                 Toast.makeText(getContext(), "You don't have any cake to claim",
@@ -74,29 +78,42 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             }
         });
 
-        Button claim_pizza = getView().findViewById(R.id.reset_pizza);
-        claim_pizza.setOnClickListener(btn -> {
-            if (manager.getUnusedPizza() != 0) {
+
+        claimPizza = getView().findViewById(R.id.reset_pizza);
+        claimPizza.setOnClickListener(btn -> {
+            if (manager.getUnusedPizza() > 0) {
                 new RewardPopup(this).claimReward(RewardType.PIZZA);
             } else {
                 Toast.makeText(getContext(), "You don't have any pizza to claim",
                         Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     private void selectItemAtPosition(int position) {
         if (selectedItems.contains(position)) {
             gridView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
             selectedItems.remove(selectedItems.indexOf(position));
+
+            // if nothing to de-select
+            if(selectedItems.size() == 0)
+                unPimpButton(resetSelection);
+            unPimpButton(addPair);
+
             return;
         }
 
-        if (selectedItems.size() > 1) return;
+        if (selectedItems.size() >= 2) return;
 
         selectedItems.add(position);
+        pimpButton(resetSelection);
+
         gridView.getChildAt(position).setBackgroundColor(Color.argb(126, 0, 255, 0));
+
+        //change color if buttons does something on click
+        if(selectedItems.size() == 2) {
+            pimpButton(addPair);
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -137,6 +154,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void updateStatus() {
+        pimpIfAvailableRewards();
+
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
         }
@@ -148,6 +167,25 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         }
     }
 
+    private void pimpButton(Button button) {
+        button.getBackground().setColorFilter(Color.parseColor("#ff1243"), PorterDuff.Mode.MULTIPLY);
+    }
+
+    private void unPimpButton(Button button) {
+        button.getBackground().clearColorFilter();
+    }
+
+    private void pimpIfAvailableRewards() {
+        if (manager.getUnusedCake() > 0)
+            pimpButton(claimCake);
+        else
+            unPimpButton(claimCake);
+        if (manager.getUnusedPizza() > 0)
+            pimpButton(claimPizza);
+        else
+            unPimpButton(claimPizza);
+    }
+
     @Override
     public void useReward(RewardType type) {
         manager.setUseVariableToTrue(type);
@@ -157,6 +195,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         for (Integer i : selectedItems)
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
+        unPimpButton(resetSelection);
+        unPimpButton(addPair);
     }
 
     @Override
@@ -192,7 +232,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         manager = new DataManager(token, this);
     }
 
-    private void askForToken(boolean rejected){
+    private void askForToken(boolean rejected) {
         String message = rejected ?
                 "Token rejected." :
                 "Valid token needed for access.";
