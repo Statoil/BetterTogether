@@ -148,16 +148,16 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         }
     }
 
+    @Override
+    public void useReward(RewardType type) {
+        manager.setUseVariableToTrue(type);
+    }
+
     private void resetSelectedPersons() {
         for (Integer i : selectedItems)
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
     }
-
-    public DataManager getManager() {
-        return manager;
-    }
-
 
     @Override
     public void responseError(int code, String message) {
