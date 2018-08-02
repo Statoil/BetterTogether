@@ -3,4 +3,14 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="backgroundColor">#ff243746</color>
+    <color name="energyRed">#ff1243</color>
+    <color name="white">#FFFFFF</color>
+    <color name="slateBlue">#243746</color>
+    <color name="heritageRed">#7d0023</color>
+    <color name="mossGreen">#007079</color>
+    <color name="mistBlue">#D5EAF4</color>
+    <color name="spruceWood">#FFE7D6</color>
+    <color name="lichenGreen">#E6FAEC</color>
+    <color name="black">#243746</color>
 </resources>

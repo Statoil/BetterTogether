@@ -45,6 +45,9 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     private Button addPair;
     private Button resetSelection;
 
+    private int selectionColor;
+    private int pimpedButtonColor;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +60,10 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         selectedItems = new ArrayList<>();
+
+        int energyRed = getResources().getColor(R.color.energyRed);
+        selectionColor = energyRed;
+        pimpedButtonColor = energyRed;
 
         askForToken(false);
 
@@ -117,12 +124,16 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         selectedItems.add(position);
         pimpButton(resetSelection);
 
-        gridView.getChildAt(position).setBackgroundColor(Color.argb(126, 0, 255, 0));
+        gridView.getChildAt(position).setBackgroundColor(selectionColor);
 
         //change color if buttons does something on click
         if(selectedItems.size() == 2) {
             pimpButton(addPair);
         }
+    }
+
+    private void pimpButton(Button button) {
+        button.getBackground().setColorFilter(pimpedButtonColor, PorterDuff.Mode.MULTIPLY);
     }
 
     @SuppressLint("CheckResult")
@@ -174,10 +185,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             lastPair.setText(manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson1() +
                     " & " + manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson2());
         }
-    }
-
-    private void pimpButton(Button button) {
-        button.getBackground().setColorFilter(Color.parseColor("#ff1243"), PorterDuff.Mode.MULTIPLY);
     }
 
     private void unPimpButton(Button button) {
