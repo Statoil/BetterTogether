@@ -99,28 +99,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         gridView.getChildAt(position).setBackgroundColor(Color.argb(126, 0, 255, 0));
     }
 
-
-    void setUpGridView() {
-        List<Person> persons = manager.getActiveUsers();
-
-        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener((adapterView, view, position, l) ->
-                selectItemAtPosition(position));
-
-
-        disableScrolling();
-    }
-
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void disableScrolling() {
-        gridView.setOnTouchListener((View v, MotionEvent e) ->
-                e.getAction() == MotionEvent.ACTION_MOVE);
-        gridView.setVerticalScrollBarEnabled(false);
-    }
-
-
     @SuppressLint("CheckResult")
     private void createPair() {
         if (selectedItems.size() < 2) {
@@ -157,7 +135,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     }
 
-    private void writeStatus() {
+    @Override
+    public void updateStatus() {
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
         }
@@ -190,12 +169,22 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void updateGrid() {
-        setUpGridView();
+        List<Person> persons = manager.getActiveUsers();
+
+        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener((adapterView, view, position, l) ->
+                selectItemAtPosition(position));
+
+
+        disableScrolling();
     }
 
-    @Override
-    public void updateStatus() {
-        writeStatus();
+    @SuppressLint("ClickableViewAccessibility")
+    private void disableScrolling() {
+        gridView.setOnTouchListener((View v, MotionEvent e) ->
+                e.getAction() == MotionEvent.ACTION_MOVE);
+        gridView.setVerticalScrollBarEnabled(false);
     }
 
     @Override
