@@ -75,16 +75,13 @@ public class DataManager {
 
     }
 
-    public boolean isRewardReached(RewardType type) {
+    private void createRewardIfReached(RewardType type) {
         if (pizzaPairs.size() >= pizzaThreshold && type == RewardType.PIZZA) {
             addReward(RewardType.PIZZA);
-            return true;
         }
         if (cakePairs.size() >= cakeThreshold && type == RewardType.CAKE) {
             addReward(RewardType.CAKE);
-            return true;
         }
-        return false;
     }
 
     private void initializeData() {
@@ -95,36 +92,17 @@ public class DataManager {
     }
 
     private void updatePairs() {
-        pairDao.getHistory().enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                        listener.updateStatus();
-                    }
-                }));
-
-        pairDao.getPairsSinceLastReward(RewardType.PIZZA).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                        listener.updateStatus();
-                    }
-                })
-        );
-
-        pairDao.getPairsSinceLastReward(RewardType.CAKE).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                        listener.updateStatus();
-                    }
-                })
-        );
-
+        updateAllPairs();
+        updatePizzaPairs();
+        updateCakePairs();
     }
 
-
     private void updateThresholds() {
+        updateCakeThreshold();
+        updatePizzaThreshold();
+    }
+
+    private void updateCakeThreshold() {
         rewardDao.getThreshold(RewardType.PIZZA).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     if (isValidResponse(throwable, response)) {
@@ -132,6 +110,9 @@ public class DataManager {
                         listener.updateStatus();
                     }
                 }));
+    }
+
+    private void updatePizzaThreshold() {
         rewardDao.getThreshold(RewardType.CAKE).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     if (isValidResponse(throwable, response)) {
@@ -141,6 +122,78 @@ public class DataManager {
                 }));
     }
 
+    private void updateAllPairs() {
+        pairDao.getHistory().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response)) {
+                        this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
+                        listener.updateStatus();
+                    }
+                }));
+    }
+
+    private void updatePizzaPairs() {
+        pairDao.getPairsSinceLastReward(RewardType.PIZZA).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response)) {
+                        this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
+                        listener.updateStatus();
+                        createRewardIfReached(RewardType.PIZZA);
+                    }
+                })
+        );
+    }
+
+    private void updateCakePairs() {
+        pairDao.getPairsSinceLastReward(RewardType.CAKE).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response)) {
+                        this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
+                        listener.updateStatus();
+                        createRewardIfReached(RewardType.CAKE);
+                    }
+                })
+        );
+    }
+
+    private void addReward(RewardType type) {
+        RewardResponse res = ResponsePojoConverter.rewardToRewardResponse(
+                new Reward(type));
+
+        rewardDao.addReward(res).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response)) {
+                        updateUnusedRewards();
+                        if (type == RewardType.CAKE)
+                            updateCakePairs();
+                        else
+                            updatePizzaPairs();
+                        listener.updateStatus();
+                        listener.rewardReached(type);
+                    }
+                }));
+    }
+
+    public void addPair(Pair pair) {
+        pairDao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response))
+                        updatePairs();
+                }
+                ));
+    }
+
+
+    public void setUseVariableToTrue(RewardType rewardType) {
+        rewardDao.updateReward(rewardType.toString()).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response))
+                        updateUnusedRewards();
+                }
+                )
+        );
+
+    }
 
     private void updateUnusedRewards() {
         rewardDao.numberOfUnusedRewards(RewardType.PIZZA).enqueue(
@@ -166,43 +219,6 @@ public class DataManager {
                         listener.updateGrid();
                     }
                 }));
-    }
-
-
-    private void addReward(RewardType type) {
-        RewardResponse res = ResponsePojoConverter.rewardToRewardResponse(
-                new Reward(type));
-
-        rewardDao.addReward(res).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        updatePairs();
-                        updateUnusedRewards();
-                        listener.updateStatus();
-                    }
-                }));
-    }
-
-
-    public void addPair(Pair pair) {
-        pairDao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response))
-                        updatePairs();
-                }
-                ));
-    }
-
-
-    public void setUseVariableToTrue(RewardType rewardType) {
-        rewardDao.updateReward(rewardType.toString()).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response))
-                        updateUnusedRewards();
-                }
-                )
-        );
-
     }
 
 

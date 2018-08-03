@@ -13,4 +13,6 @@ public interface DataUpdateListener {
     void updateStatus();
 
     void useReward(RewardType type);
+
+    void rewardReached(RewardType type);
 }

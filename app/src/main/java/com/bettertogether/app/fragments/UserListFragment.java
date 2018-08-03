@@ -158,15 +158,9 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
                         " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
     }
 
-    public void createRewardPopupIfReachedReward() {
-        if (manager.isRewardReached(RewardType.PIZZA)) {
-            popupIsActive = true;
-            new RewardPopup(this).whistle(RewardType.PIZZA);
-        }
-        if (manager.isRewardReached(RewardType.CAKE)) {
-            popupIsActive = true;
-            new RewardPopup(this).whistle(RewardType.CAKE);
-        }
+    @Override
+    public void rewardReached(RewardType type) {
+        new RewardPopup(this).whistle(type);
     }
 
     public void setPopupIsActiveFalse() {
@@ -177,10 +171,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     @Override
     public void updateStatus() {
         pimpIfAvailableRewards();
-
-        if (!popupIsActive) {
-            createRewardPopupIfReachedReward();
-        }
 
         if (!manager.getAllPairs().isEmpty()) {
             TextView lastPair = getView().findViewById(R.id.last_event);
