@@ -2,7 +2,6 @@ package com.bettertogether.app.dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 
 import com.bettertogether.app.R;
