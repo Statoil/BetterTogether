@@ -101,6 +101,10 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        //nothing is fetched from DB yet.
+        if(manager == null){
+            return;
+        }
         int num = manager.getActiveUsers().size();
         setGridColumnNumber(num);
 
