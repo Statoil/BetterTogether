@@ -1,3 +1,5 @@
+**Disclaimer:** BetterTogether is an application made by summer interns in Equinor during the summer of 2018 for which purpose is to visualise and encourage pair programming. As the project is no longer in use nor maintained, the repository is archieved.
+
 # BetterTogether
 
 [![Travis](https://travis-ci.org/Statoil/BetterTogether.svg?branch=master)](https://travis-ci.org/Statoil/BetterTogether)
